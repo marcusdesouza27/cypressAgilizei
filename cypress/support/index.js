@@ -18,7 +18,7 @@ import './commands'
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
-before(() => {
+beforeEach(() => {
     cy.server(); // --> Obrigatório para server e route
 
     cy.createong();

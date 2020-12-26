@@ -42,3 +42,29 @@ Cypress.Commands.add('createong', () => {
         Cypress.env('createdOngId', response.body.id)
     });
 })
+Cypress.Commands.add('Login', () => {
+    cy.visit('http://localhost:3000/profile', {
+        onBeforeLoad: (browser) => {
+            browser.localStorage.setItem('ongId', Cypress.env('createdOngId'));
+            browser.localStorage.setItem('ongName','MHCS Quality force');
+        }
+    });
+})
+
+Cypress.Commands.add('createNewIncident', () => {
+    cy.request({
+        method: 'POST',
+        url: 'http://localhost:3333/incidents',
+        headers: { 'Authorization': `${ Cypress.env('createdOngId') }`, },
+        body: {
+            title: "Automação em Cypress",
+            description: "Suporte a automatizadores de JavaScript, NodeJs com Cypress",
+            value: "100"
+        }
+    }).then(response => {
+        expect(response.body.id).is.not.null;
+        cy.log(response.body.id);
+
+        Cypress.env('createdIncidentId', response.body.id)
+    })
+})
