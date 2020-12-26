@@ -10,12 +10,6 @@ describe('Be the Hero', () => {
         cy.get('[data-cy="city"]').type('São Paulo');
         cy.get('[data-cy="uf"]').type('SP');
 
-        //routing...
-        // start server com cy.server()
-        // criar uma rota com cu route()
-        // Atribuir rota a um alias
-        // esperar com cy.wait
-
         cy.server();
         cy.route('POST', '**/ongs').as('postOng');
 
@@ -26,12 +20,49 @@ describe('Be the Hero', () => {
             expect(xhr.response.body).has.property('id');
             expect(xhr.response.body.id).is.not.null;
         })
-       
+
     });
 
     it('Efetuar um login no sistema', () => {
         cy.visit('http://localhost:3000/');
         cy.get('input').type(Cypress.env('createdOngId'));
         cy.get('.button').click();
+    })
+
+    it('Devem poder fazer logout', () => {
+        cy.Login();
+        cy.get('button').click();
+    });
+
+    it('Devem poder cadastrar novos casos', () => {
+        cy.Login();
+        cy.get('.button').click();
+
+        cy.get('input[placeholder="Título do caso"]').type('Automação em Cypress');
+        cy.get('textarea').type('Suporte a automatizadores de JavaScript, NodeJs com Cypress');
+        cy.get('input[placeholder="Valor em reais"]').type('100');
+
+        cy.route('POST', '**/incidents').as('newIncident')
+
+        cy.get('.button').click();
+
+        cy.wait('@newIncident').then((xhr) => {
+            expect(xhr.status).be.eq(200);
+            expect(xhr.response.body).has.property('id');
+            expect(xhr.response.body.id).is.not.null;
+        })
+    });
+
+    it('Devem poder excluir um caso', () => {
+        cy.createNewIncident()
+        cy.Login();
+        
+        cy.route('DELETE', '**/incidents/*').as('newDeletion')
+
+        cy.get('li > button > svg').click();
+        cy.wait('@newDeletion').then((xhr) => {
+            expect(xhr.status).be.eq(204);
+            expect(xhr.response.body).to.be.empty;
+        })
     })
 });
