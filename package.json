@@ -12,6 +12,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@shelex/cypress-allure-plugin": "^1.9.0",
     "cypress": "^4.1.0"
   }
 }
